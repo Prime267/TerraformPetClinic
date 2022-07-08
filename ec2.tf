@@ -1,7 +1,42 @@
+data "aws_ami" "amazon-linux-2" {
+  most_recent = true
 
+  filter {
+    name   = "owner-alias"
+    values = ["amazon"]
+  }
+
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-kernel-*-hvm-*-x86_64-gp2"]
+  }
+
+  filter {
+    name   = "architecture"
+    values = ["x86_64"]
+  }
+
+}
+
+data "template_file" "db_script" {
+  template = file("${path.module}/templates/mariaDB.sh")
+
+}
+
+# Render a multi-part cloud-init config making use of the part
+# above, and other source files
+# data "template_cloudinit_config" "db_config" {
+#   gzip          = true
+#   base64_encode = true
+
+#   # Main cloud-config configuration file.
+#   part {
+#   content = data.template_file.db_script.template
+#    }
+# }
 
 resource "aws_instance" "ec2_javaApp" {
-  ami                    = var.ami
+  ami                    = data.aws_ami.amazon-linux-2.id
   instance_type          = var.instance_type
   vpc_security_group_ids = [aws_security_group.javaApp_securityGroup.id]
   subnet_id              = aws_subnet.myPublicSubnet.id
@@ -19,7 +54,7 @@ resource "aws_instance" "ec2_javaApp" {
 
 
 resource "aws_instance" "ec2_dataBase" {
-  ami                    = var.ami
+  ami                    = data.aws_ami.amazon-linux-2.id
   instance_type          = var.instance_type
   vpc_security_group_ids = [aws_security_group.javaApp_securityGroup.id]
   subnet_id              = aws_subnet.myPublicSubnet.id
@@ -33,13 +68,6 @@ resource "aws_instance" "ec2_dataBase" {
     Name = "Terra-dataBase"
   }
 
-  user_data = <<EOF
-#!/bin/bash
-yum update
-yum install docker -y
-systemctl enable docker.service
-systemctl start docker.service
-docker run --name mariadbPetClinic -e MYSQL_PASSWORD=petclinic -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=petclinic -p 3306:3306 -d docker.io/library/mariadb:latest
-EOF
+  user_data =  templatefile("templates/mariaDB.sh", {  })
 
 }
