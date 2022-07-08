@@ -20,7 +20,7 @@ data "aws_ami" "amazon-linux-2" {
 
 data "template_file" "db_script" {
   template = file("${path.module}/templates/mariaDB.sh")
-
+  vars     = { pass = var.MYSQL_PASSWORD, root_pass = var.MYSQL_ROOT_PASSWORD, database = var.MYSQL_DATABASE }
 }
 
 # Render a multi-part cloud-init config making use of the part
@@ -68,6 +68,7 @@ resource "aws_instance" "ec2_dataBase" {
     Name = "Terra-dataBase"
   }
 
-  user_data =  templatefile("templates/mariaDB.sh", {  })
+  #user_data = data.template_file.db_script.rendered
+  user_data = templatefile("templates/mariaDB.sh", { pass = var.MYSQL_PASSWORD, root_pass = var.MYSQL_ROOT_PASSWORD, database = var.MYSQL_DATABASE })
 
 }
