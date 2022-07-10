@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "${pass} test for mariaDB.sh">/home/testForDB.txt
+
 echo date>/home/date.txt
 yum update
 yum install docker -y
