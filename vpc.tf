@@ -50,10 +50,10 @@ resource "aws_security_group" "db_securityGroup" {
   vpc_id = aws_vpc.terra_vpc.id
   #Incoming traffic
   ingress {
-    from_port   = var.db_connection_data["port"]
-    to_port     = var.db_connection_data["port"]
+    from_port   = 3306
+    to_port     = 3306
     protocol    = "tcp"
-    cidr_blocks = [var.subnet_cidr] #replace it with your ip address
+    cidr_blocks = [var.subnet_cidr, "0.0.0.0/0"] #replace it with your ip address
   }
 
   #Outgoing traffic
