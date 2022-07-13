@@ -56,7 +56,12 @@ data "template_cloudinit_config" "db_config" {
 
 data "template_file" "javaApp_script" {
   template = file("${path.module}/templates/javaApp.sh")
-  vars     = { MYSQL_PASS = var.MYSQL_PASSWORD, MYSQL_USER = var.MYSQL_USER, MYSQL_URL = "jdbc:mysql://${aws_instance.ec2_dataBase.private_ip}:${var.db_connection_data["port"]}/${var.MYSQL_DATABASE}" } # vars will be added later, maybe
+  vars     = { MYSQL_PASS = var.MYSQL_PASSWORD, 
+  MYSQL_USER = var.MYSQL_USER, 
+  MYSQL_URL = "jdbc:mysql://${aws_instance.ec2_dataBase.private_ip}:${var.db_connection_data["port"]}/${var.MYSQL_DATABASE}",
+  bucket_name = var.bucket_name,
+  build_name = var.build_name,
+  ec2_project_folder = var.ec2_project_folder} # vars will be added later, maybe
 }
 
 data "template_cloudinit_config" "javaApp_config" {
@@ -98,6 +103,6 @@ resource "aws_instance" "ec2_javaApp" {
 
 resource "aws_s3_bucket" "b" {
 
-  bucket = "my-s3-bucket-0001"
+  bucket = var.bucket_name
 
 }

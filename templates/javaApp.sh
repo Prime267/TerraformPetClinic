@@ -7,9 +7,9 @@ export MYSQL_USER=${MYSQL_USER}
 # mkdir /petclinicWget && wget https://gitlab.com/bogdan.sh.ua/Demo/-/jobs/artifacts/master/download?job=build -O /petclinic
 # unzip /petclinicWget/artifacts.zip .
 
-mkdir /petclinic && aws s3 cp s3://my-s3-bucket-0001/spring-petclinic-2.3.1.BUILD-SNAPSHOT.jar /petclinic
+mkdir /${ec2_project_folder} && aws s3 cp s3://${bucket_name}/${build_name} /${ec2_project_folder}
 yum install java-1.8.0-devel -y
-java -Dspring.profiles.active=mysql -jar /petclinic/spring-petclinic*.jar
+java -Dspring.profiles.active=mysql -jar /${ec2_project_folder}/${build_name}
 
 # wget https://repos.fedorapeople.org/repos/dchen/apache-maven/epel-apache-maven.repo -O /etc/yum.repos.d/epel-apache-maven.repo
 # sed -i s/\$releasever/6/g /etc/yum.repos.d/epel-apache-maven.repo
