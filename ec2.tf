@@ -69,6 +69,18 @@ data "template_cloudinit_config" "javaApp_config" {
 }
 
 
+resource "aws_instance" "ec2_dataBase" {
+  ami                    = data.aws_ami.amazon-linux-2.id
+  instance_type          = var.instance_type
+  vpc_security_group_ids = [aws_security_group.db_securityGroup.id]
+  subnet_id              = aws_subnet.myPublicSubnet.id
+  private_ip             = var.db_connection_data["private_ip"]
+  iam_instance_profile   = aws_iam_instance_profile.my_profile.name
+  user_data              = data.template_cloudinit_config.db_config.rendered
+  tags = {
+    Name = "Terra-dataBase"
+  }
+}
 
 resource "aws_instance" "ec2_javaApp" {
   ami                    = data.aws_ami.amazon-linux-2.id
@@ -81,21 +93,6 @@ resource "aws_instance" "ec2_javaApp" {
   tags = {
     Name = "Terra-javaApp"
   }
-}
-
-
-resource "aws_instance" "ec2_dataBase" {
-  ami                    = data.aws_ami.amazon-linux-2.id
-  instance_type          = var.instance_type
-  vpc_security_group_ids = [aws_security_group.db_securityGroup.id]
-  subnet_id              = aws_subnet.myPublicSubnet.id
-  private_ip             = var.db_connection_data["private_ip"]
-  iam_instance_profile   = aws_iam_instance_profile.my_profile.name
-  user_data              = data.template_cloudinit_config.db_config.rendered
-  tags = {
-    Name = "Terra-dataBase"
-  }
-
 }
 
 

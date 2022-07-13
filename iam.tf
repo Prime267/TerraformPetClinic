@@ -1,7 +1,3 @@
-resource "aws_iam_instance_profile" "my_profile" {
-  name = "test_profile"
-  role = aws_iam_role.ssm-role.name
-}
 
 resource "aws_iam_role" "ssm-role" {
   name = "ssm_role"
@@ -21,7 +17,23 @@ resource "aws_iam_role" "ssm-role" {
   })
 }
 
+
+
+resource "aws_iam_instance_profile" "my_profile" {
+
+
+  name = "test_profile"
+  role = aws_iam_role.ssm-role.name
+}
+
 resource "aws_iam_role_policy_attachment" "test_attach" {
+
+  for_each = toset([
+    "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
+    "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+  ])
+
   role       = aws_iam_role.ssm-role.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+  policy_arn = each.value
+
 }
