@@ -101,8 +101,26 @@ resource "aws_instance" "ec2_javaApp" {
 }
 
 
-resource "aws_s3_bucket" "b" {
+# resource "aws_s3_bucket" "b" {
 
-  bucket = var.bucket_name
+#   bucket = var.bucket_name
 
+# }
+
+
+terraform {
+  backend "s3" {
+    bucket = "backend-storage-0432"
+    key    = "terraform.tfstate"
+    region = "eu-north-1"
+    dynamodb_table = "terraform-state"
+    
+  }
 }
+
+
+
+
+
+
+

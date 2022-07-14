@@ -22,7 +22,7 @@ resource "aws_iam_role" "ssm-role" {
 resource "aws_iam_instance_profile" "my_profile" {
 
 
-  name = "test_profile"
+  name = "terra_instance_profile"
   role = aws_iam_role.ssm-role.name
 }
 
